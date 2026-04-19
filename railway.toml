@@ -1,8 +1,8 @@
 [build]
-builder = "nixpacks"
+builder = "dockerfile"
+dockerfilePath = "morphyverse-server/Dockerfile"
 
 [deploy]
-startCommand = "cd morphyverse-server && uvicorn main:app --host 0.0.0.0 --port $PORT"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 120
 restartPolicyType = "on_failure"
