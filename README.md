@@ -33,6 +33,55 @@ The laptop never receives requests from phones directly. The Replit server is th
 
 ---
 
+## Usage Guide
+
+### 1. Register a New Object
+
+Open the app and tap **Register** in the bottom nav. The flow is three steps: Capture → Crop → Name.
+
+**Capture** — point the rear camera at the object and tap **Capture Photo**.
+
+**Crop** — the photo loads in an interactive canvas. Draw a tight bounding box around just the object.
+
+- Switch between **Rect** (drag), **Poly** (tap vertices), and **Pan** (drag to navigate) modes
+- Use the **zoom slider** to get precise control — the canvas zooms around the center
+- The **minimap** appears in the bottom-right corner when zoomed in; tap anywhere on it to jump there
+- The green magnifier loupe follows your finger for sub-pixel accuracy at the crop edge
+
+<img src="assets/register-crop.png" width="320" alt="Crop step — zoom slider and minimap navigator" />
+
+Tap **Confirm Crop** when the selection looks right.
+
+**Name** — enter what the object is called. All captured views are shown as thumbnails; tap × on any to remove it.
+
+<img src="assets/register-multiview.png" width="600" alt="Name step — 4 views captured with thumbnails" />
+
+To register the same object from multiple angles, tap **+ Add Another View** before registering. This goes back to the camera, captures another crop, and adds it alongside the first. When you tap **Register**, each view is submitted separately — same name, separate object IDs — so YOLOE-26 can recognise the object regardless of orientation.
+
+---
+
+### 2. Scan a Table
+
+Tap **Scan** in the bottom nav. Select the table you want to monitor, then tap **Start Scan**. The camera fires every 30 seconds automatically — point it at the workstation and leave it running. Bounding box overlays and toast notifications appear after each scan.
+
+---
+
+### 3. Check Inventory
+
+Tap **Inventory** to see the live central count for every registered object and which tables are currently active.
+
+<img src="assets/inventory.png" width="320" alt="Inventory dashboard" />
+
+Use the **Search objects** bar to locate a specific part — results show which table it's on and when it was last seen.
+
+---
+
+### 4. View the Outgoing Log
+
+Tap **Outgoing** for an append-only record of every part consumed at a Production Table — what left, from which table, and at what time.
+
+---
+
 ## The Core Insight: Two Types of Tables
 
 Every workstation in the lab is registered as one of two types. This distinction drives all inventory accounting.
