@@ -12,7 +12,7 @@ router = APIRouter()
 
 def _ping_inference() -> str:
     try:
-        resp = requests.get(f"{INFERENCE_SERVER_URL}/health", timeout=3)
+        resp = requests.get(f"{INFERENCE_SERVER_URL}/health", timeout=1)
         resp.raise_for_status()
         return "reachable"
     except Exception:
