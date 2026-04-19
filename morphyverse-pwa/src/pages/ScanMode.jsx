@@ -4,7 +4,7 @@ import { DetectionOverlay } from '../components/DetectionOverlay'
 import { TableSelector } from '../components/TableSelector'
 import { Toast } from '../components/Toast'
 import { useScanLoop } from '../hooks/useScanLoop'
-import { submitScan } from '../api/client'
+import { submitScan, createTable, getTables } from '../api/client'
 import { useStore } from '../store/store'
 
 export default function ScanMode() {
@@ -14,7 +14,34 @@ export default function ScanMode() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [cameraError, setCameraError] = useState(null)
-  const { lastScanResult, setLastScanResult } = useStore()
+  const { lastScanResult, setLastScanResult, setTables } = useStore()
+
+  // ── New-table form state ──────────────────────────────────────────────────
+  const [showCreate, setShowCreate] = useState(false)
+  const [newLabel, setNewLabel] = useState('')
+  const [newType, setNewType] = useState('lab')
+  const [creating, setCreating] = useState(false)
+  const [createError, setCreateError] = useState(null)
+
+  const handleCreateTable = async () => {
+    if (!newLabel.trim()) return
+    setCreating(true)
+    setCreateError(null)
+    try {
+      const id = crypto.randomUUID()
+      await createTable({ id, label: newLabel.trim(), type: newType })
+      const updated = await getTables()
+      setTables(updated)
+      setNewLabel('')
+      setNewType('lab')
+      setShowCreate(false)
+      setTableId(id)           // auto-select the new table in the dropdown
+    } catch (e) {
+      setCreateError(e.message)
+    } finally {
+      setCreating(false)
+    }
+  }
 
   const doScan = async () => {
     if (!tableId || loading) return
@@ -53,7 +80,57 @@ export default function ScanMode() {
 
       <Toast events={lastScanResult?.inventory_events} />
 
-      <TableSelector value={tableId} onChange={setTableId} />
+      {/* ── Table registration + selector ─────────────────────────────── */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Table</span>
+          <button
+            onClick={() => { setShowCreate((v) => !v); setCreateError(null) }}
+            className="text-xs font-semibold text-emerald-400"
+          >
+            {showCreate ? 'Cancel' : '+ New Table'}
+          </button>
+        </div>
+
+        {showCreate && (
+          <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-3 space-y-3">
+            <input
+              type="text"
+              value={newLabel}
+              onChange={(e) => setNewLabel(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleCreateTable()}
+              placeholder="Table name (e.g. Bench A)"
+              className="w-full bg-zinc-900 border border-zinc-700 text-white placeholder-zinc-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              autoFocus
+            />
+            <div className="flex gap-2">
+              {[['lab', 'Lab Table'], ['production', 'Production']].map(([t, label]) => (
+                <button
+                  key={t}
+                  onClick={() => setNewType(t)}
+                  className={`flex-1 py-2 text-xs rounded-lg font-semibold transition-colors ${
+                    newType === t
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-zinc-900 text-zinc-400 border border-zinc-700'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {createError && <p className="text-red-400 text-xs">{createError}</p>}
+            <button
+              onClick={handleCreateTable}
+              disabled={!newLabel.trim() || creating}
+              className="w-full py-2 bg-emerald-500 text-white rounded-lg font-semibold text-sm disabled:opacity-50"
+            >
+              {creating ? 'Creating…' : 'Create Table'}
+            </button>
+          </div>
+        )}
+
+        <TableSelector value={tableId} onChange={setTableId} />
+      </div>
 
       {cameraError ? (
         <div className="aspect-video bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-800">
