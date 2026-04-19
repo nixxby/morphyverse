@@ -4,7 +4,7 @@ import { DetectionOverlay } from '../components/DetectionOverlay'
 import { TableSelector } from '../components/TableSelector'
 import { Toast } from '../components/Toast'
 import { useScanLoop } from '../hooks/useScanLoop'
-import { submitScan, createTable, getTables } from '../api/client'
+import { submitScan, createTable, getTables, getInventory } from '../api/client'
 import { useStore } from '../store/store'
 
 export default function ScanMode() {
@@ -14,7 +14,7 @@ export default function ScanMode() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [cameraError, setCameraError] = useState(null)
-  const { tables, lastScanResult, setLastScanResult, setTables } = useStore()
+  const { tables, lastScanResult, setLastScanResult, setTables, setInventory } = useStore()
 
   // ── New-table form state ──────────────────────────────────────────────────
   const [showCreate, setShowCreate] = useState(false)
@@ -54,6 +54,10 @@ export default function ScanMode() {
       if (!blob) { setLoading(false); return }
       const result = await submitScan(tableId, blob)
       setLastScanResult({ ...result, imageBlob: blob })
+      // Refresh inventory if any events fired (checkout / return / consumed)
+      if (result.inventory_events?.length > 0) {
+        getInventory().then(setInventory).catch(() => {})
+      }
     } catch (e) {
       setError(e.message)
     } finally {

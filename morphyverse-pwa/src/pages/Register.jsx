@@ -1,11 +1,13 @@
 import { useRef, useState, useEffect } from 'react'
 import { CameraView } from '../components/CameraView'
 import { BBoxAnnotator } from '../components/BBoxAnnotator'
-import { registerObject } from '../api/client'
+import { registerObject, getInventory } from '../api/client'
+import { useStore } from '../store/store'
 
 const STEPS = ['Capture', 'Crop', 'Name']
 
 export default function Register() {
+  const { setInventory } = useStore()
   const cameraRef    = useRef(null)
   const annotatorRef = useRef(null)
   const [step, setStep]           = useState(0)
@@ -61,6 +63,8 @@ export default function Register() {
           : `"${name.trim()}" registered with ${crops.length} views!`
       )
       reset()
+      // Refresh inventory so Dashboard shows the new object immediately
+      getInventory().then(setInventory).catch(() => {})
     } catch (e) {
       setError(e.message)
     } finally {
