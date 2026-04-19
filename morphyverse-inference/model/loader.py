@@ -1,7 +1,7 @@
 import time
 from loguru import logger
 
-# TODO: Download yoloe-26s-seg.pt and place it in the project root before running
+# TODO: Download yoloe-26x-seg.pt and place it in the project root before running
 _model = None
 
 
@@ -10,9 +10,9 @@ def load_model() -> None:
     # TODO: Confirm the correct YOLOE import path from ultralytics >= 8.4.0
     from ultralytics import YOLOE
     start = time.time()
-    _model = YOLOE("yoloe-26l-seg.pt")
+    _model = YOLOE("yoloe-26x-seg.pt")
     elapsed = time.time() - start
-    logger.info(f"YOLOE-26l loaded in {elapsed:.2f}s")
+    logger.info(f"YOLOE-26x loaded in {elapsed:.2f}s")
 
 
 def get_model():
