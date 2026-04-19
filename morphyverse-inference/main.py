@@ -50,7 +50,7 @@ async def detect(
         "detections": detections,
         "latency_ms": latency_ms,
         "embedding_count": crop_store.count(),  # field name kept for Replit compat
-        "model_version": "yoloe-26l-seg",
+        "model_version": "yoloe-26x-seg",
     }
 
 
