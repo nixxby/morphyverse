@@ -1,0 +1,21 @@
+# Model weights
+*.pt
+*.onnx
+
+# Logs
+logs/
+
+# Environment
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# ngrok
+ngrok.yml

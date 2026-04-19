@@ -1,4 +1,3 @@
-import json
 import uuid
 from datetime import datetime
 
@@ -19,26 +18,16 @@ async def register(
     db: Session = Depends(get_db),
 ):
     crop_bytes = await crop.read()
+    object_id = str(uuid.uuid4())
 
     try:
-        embedding = await relay_register(object_name, crop_bytes)
+        await relay_register(object_id, object_name, crop_bytes)
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Inference server unreachable: {e}")
 
-    object_id = str(uuid.uuid4())
     now = datetime.utcnow()
-
-    db.add(Object(
-        id=object_id,
-        name=object_name,
-        embedding=json.dumps(embedding),
-        created_at=now,
-    ))
-    db.add(CentralRegistry(
-        object_id=object_id,
-        count=1,
-        last_updated=now,
-    ))
+    db.add(Object(id=object_id, name=object_name, created_at=now))
+    db.add(CentralRegistry(object_id=object_id, count=1, last_updated=now))
     db.commit()
 
     return {"object_id": object_id, "name": object_name}

@@ -6,7 +6,7 @@ from db.database import engine
 from db import models  # noqa: F401 — registers models with Base
 from db.database import Base
 
-from api import scan, register, embeddings, tables, inventory, health
+from api import scan, register, tables, inventory, health
 
 Base.metadata.create_all(bind=engine)
 
@@ -21,7 +21,6 @@ app.add_middleware(
 
 app.include_router(scan.router)
 app.include_router(register.router)
-app.include_router(embeddings.router)
 app.include_router(tables.router)
 app.include_router(inventory.router)
 app.include_router(health.router)
