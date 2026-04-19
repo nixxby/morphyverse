@@ -5,6 +5,11 @@
 # Logs
 logs/
 
+# Registered crop images (persisted on disk, not committed)
+crops/*.jpg
+crops/*.jpeg
+crops/*.png
+
 # Environment
 .env
 

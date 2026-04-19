@@ -10,9 +10,9 @@ def load_model() -> None:
     # TODO: Confirm the correct YOLOE import path from ultralytics >= 8.4.0
     from ultralytics import YOLOE
     start = time.time()
-    _model = YOLOE("yoloe-26s-seg.pt")
+    _model = YOLOE("yoloe-26l-seg.pt")
     elapsed = time.time() - start
-    logger.info(f"YOLOE-26s loaded in {elapsed:.2f}s")
+    logger.info(f"YOLOE-26l loaded in {elapsed:.2f}s")
 
 
 def get_model():

@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# TODO: Validate that REPLIT_SERVER_URL is set and reachable on startup
-REPLIT_SERVER_URL: str = os.environ["REPLIT_SERVER_URL"]
-SYNC_INTERVAL: int = int(os.getenv("SYNC_INTERVAL", "60"))
-DEFAULT_CONF: float = float(os.getenv("DEFAULT_CONF", "0.55"))
+# No longer used for polling, but kept in case Replit integration needs it later
+REPLIT_SERVER_URL: str = os.getenv("REPLIT_SERVER_URL", "")
+
+DEFAULT_CONF: float = float(os.getenv("DEFAULT_CONF", "0.01"))
+DETECT_IMGSZ: int = int(os.getenv("DETECT_IMGSZ", "1280"))
