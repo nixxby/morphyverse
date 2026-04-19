@@ -1,0 +1,7 @@
+ultralytics>=8.4.0
+fastapi
+uvicorn[standard]
+httpx
+Pillow
+python-dotenv
+loguru

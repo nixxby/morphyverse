@@ -3,5 +3,5 @@ import os
 
 load_dotenv()
 
-INFERENCE_SERVER_URL = os.getenv("INFERENCE_SERVER_URL", "http://localhost:8001")
+INFERENCE_SERVER_URL = os.getenv("INFERENCE_SERVER_URL", "http://localhost:8001").rstrip("/")
 GRACE_PERIOD = int(os.getenv("GRACE_PERIOD", "3"))

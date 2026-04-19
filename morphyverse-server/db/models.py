@@ -9,7 +9,6 @@ class Object(Base):
 
     id: Mapped[str] = mapped_column(String, primary_key=True)
     name: Mapped[str] = mapped_column(String, nullable=False)
-    embedding: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     retired_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 

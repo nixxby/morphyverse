@@ -32,9 +32,9 @@ const ArrowUpIcon = () => (
 )
 
 const NAV = [
-  { to: '/', label: 'Inventory', Icon: GridIcon, end: true },
-  { to: '/scan', label: 'Scan', Icon: ScanIcon },
   { to: '/register', label: 'Register', Icon: PlusIcon },
+  { to: '/scan', label: 'Scan', Icon: ScanIcon },
+  { to: '/', label: 'Inventory', Icon: GridIcon, end: true },
   { to: '/outgoing', label: 'Outgoing', Icon: ArrowUpIcon },
 ]
 
