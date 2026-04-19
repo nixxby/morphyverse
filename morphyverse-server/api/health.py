@@ -1,4 +1,5 @@
-import httpx
+import asyncio
+import requests
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -9,6 +10,15 @@ from db.database import get_db
 router = APIRouter()
 
 
+def _ping_inference() -> str:
+    try:
+        resp = requests.get(f"{INFERENCE_SERVER_URL}/health", timeout=3)
+        resp.raise_for_status()
+        return "reachable"
+    except Exception:
+        return "unreachable"
+
+
 @router.get("/api/health")
 async def health(db: Session = Depends(get_db)):
     try:
@@ -17,12 +27,5 @@ async def health(db: Session = Depends(get_db)):
     except Exception:
         db_status = "error"
 
-    try:
-        async with httpx.AsyncClient(timeout=3.0) as client:
-            resp = await client.get(f"{INFERENCE_SERVER_URL}/health")
-            resp.raise_for_status()
-        inference_status = "reachable"
-    except Exception:
-        inference_status = "unreachable"
-
+    inference_status = await asyncio.to_thread(_ping_inference)
     return {"status": "ok", "db": db_status, "inference_server": inference_status}

@@ -1,28 +1,32 @@
-import httpx
+import asyncio
+import requests
 from config import INFERENCE_SERVER_URL
 
 
+def _detect_sync(table_id: str, image_bytes: bytes) -> dict:
+    resp = requests.post(
+        f"{INFERENCE_SERVER_URL}/detect",
+        data={"table_id": table_id},
+        files={"image": ("image.jpg", image_bytes, "image/jpeg")},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+
+def _register_sync(object_id: str, object_name: str, crop_bytes: bytes) -> None:
+    resp = requests.post(
+        f"{INFERENCE_SERVER_URL}/register",
+        data={"object_id": object_id, "object_name": object_name},
+        files={"crop": ("crop.jpg", crop_bytes, "image/jpeg")},
+        timeout=30,
+    )
+    resp.raise_for_status()
+
+
 async def relay_detect(table_id: str, image_bytes: bytes) -> dict:
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(
-            f"{INFERENCE_SERVER_URL}/detect",
-            files={
-                "image": ("image.jpg", image_bytes, "image/jpeg"),
-                "table_id": (None, table_id),
-            },
-        )
-        response.raise_for_status()
-        return response.json()
+    return await asyncio.to_thread(_detect_sync, table_id, image_bytes)
 
 
 async def relay_register(object_id: str, object_name: str, crop_bytes: bytes) -> None:
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(
-            f"{INFERENCE_SERVER_URL}/register",
-            files={
-                "crop": ("crop.jpg", crop_bytes, "image/jpeg"),
-                "object_id": (None, object_id),
-                "object_name": (None, object_name),
-            },
-        )
-        response.raise_for_status()
+    await asyncio.to_thread(_register_sync, object_id, object_name, crop_bytes)

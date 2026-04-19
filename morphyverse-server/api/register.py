@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-import httpx
+import requests.exceptions
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 
@@ -24,12 +24,12 @@ async def register(
 
     try:
         await relay_register(object_id, object_name, crop_bytes)
-    except httpx.ConnectError as e:
+    except requests.exceptions.ConnectionError as e:
         raise HTTPException(
             status_code=502,
             detail=f"Cannot connect to inference server ({INFERENCE_SERVER_URL}): {e}",
         )
-    except httpx.HTTPStatusError as e:
+    except requests.exceptions.HTTPError as e:
         raise HTTPException(
             status_code=502,
             detail=f"Inference server returned {e.response.status_code}: {e.response.text}",
