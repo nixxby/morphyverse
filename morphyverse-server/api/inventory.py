@@ -26,7 +26,7 @@ def locate_inventory(name: str = Query(...), db: Session = Depends(get_db)):
     rows = (
         db.query(TableInventory, Object, Table)
         .join(Object, TableInventory.object_id == Object.id)
-        .join(Table, TableInventory.table_id == Table.id)
+        .outerjoin(Table, TableInventory.table_id == Table.id)
         .filter(Object.name.ilike(f"%{name}%"))
         .filter(Object.retired_at.is_(None))
         .all()
@@ -36,7 +36,7 @@ def locate_inventory(name: str = Query(...), db: Session = Depends(get_db)):
             "object_id": ti.object_id,
             "object_name": obj.name,
             "table_id": ti.table_id,
-            "table_label": tbl.label,
+            "table_label": tbl.label if tbl else ti.table_id,
             "count": ti.count,
             "last_seen": ti.last_seen.isoformat() + "Z",
         }

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.orm import Session
 from config import GRACE_PERIOD
 from services import registry
@@ -32,6 +34,12 @@ def process_scan(db: Session, table_id: str, new_detections: list[dict]) -> list
         oid = det["object_id"]
 
         if name not in current_state_by_name:
+            # Guard: ensure an Object row exists so the inventory JOIN doesn't silently drop it.
+            # This can happen when the DB was reset but the inference server still knows the object.
+            if db.get(Object, oid) is None:
+                db.add(Object(id=oid, name=name, created_at=datetime.utcnow()))
+                db.flush()
+
             central_count = registry.get_central_count(db, oid)
             registry.set_central_count(db, oid, max(0, central_count - count))
             registry.upsert_table_inventory(db, table_id, oid, count, confidence)
@@ -54,7 +62,7 @@ def process_scan(db: Session, table_id: str, new_detections: list[dict]) -> list
             if absent >= GRACE_PERIOD:
                 row_count = row.count
 
-                if table.type == "lab":
+                if table is None or table.type == "lab":
                     central_count = registry.get_central_count(db, row.object_id)
                     registry.set_central_count(db, row.object_id, central_count + row_count)
                     registry.remove_table_inventory(db, table_id, row.object_id)
