@@ -1,0 +1,5 @@
+[phases.install]
+cmds = ["pip install --no-cache-dir -r morphyverse-server/requirements.txt"]
+
+[start]
+cmd = "cd morphyverse-server && uvicorn main:app --host 0.0.0.0 --port $PORT"
