@@ -1,0 +1,7 @@
+morphyverse.db
+.env
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
