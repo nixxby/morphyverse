@@ -19,7 +19,11 @@ export default function Dashboard() {
     }
     load()
     const id = setInterval(async () => {
-      try { setInventory(await getInventory()) } catch {}
+      try {
+        const [t, inv] = await Promise.all([getTables(), getInventory()])
+        setTables(t)
+        setInventory(inv)
+      } catch {}
     }, 10000)
     return () => clearInterval(id)
   }, [])

@@ -14,7 +14,7 @@ export default function ScanMode() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [cameraError, setCameraError] = useState(null)
-  const { lastScanResult, setLastScanResult, setTables } = useStore()
+  const { tables, lastScanResult, setLastScanResult, setTables } = useStore()
 
   // ── New-table form state ──────────────────────────────────────────────────
   const [showCreate, setShowCreate] = useState(false)
@@ -29,13 +29,15 @@ export default function ScanMode() {
     setCreateError(null)
     try {
       const id = crypto.randomUUID()
-      await createTable({ id, label: newLabel.trim(), type: newType })
-      const updated = await getTables()
-      setTables(updated)
+      const created = await createTable({ id, label: newLabel.trim(), type: newType })
+      // Update store immediately with the returned table — don't wait for getTables()
+      setTables([...tables, created])
       setNewLabel('')
       setNewType('lab')
       setShowCreate(false)
-      setTableId(id)           // auto-select the new table in the dropdown
+      setTableId(created.id)
+      // Background-sync the full list in case other tables changed
+      getTables().then(setTables).catch(() => {})
     } catch (e) {
       setCreateError(e.message)
     } finally {
