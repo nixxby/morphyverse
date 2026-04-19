@@ -1,0 +1,22 @@
+[
+  {
+    "object_id": "sm12tch",
+    "name": "smartwatch",
+    "path": "crops\\sm12tch.jpg"
+  },
+  {
+    "object_id": "k13da",
+    "name": "kada",
+    "path": "crops\\k13da.jpg"
+  },
+  {
+    "object_id": "1",
+    "name": "pillsStrip",
+    "path": "crops\\1.jpg"
+  },
+  {
+    "object_id": "2",
+    "name": "earpod",
+    "path": "crops\\2.jpg"
+  }
+]
